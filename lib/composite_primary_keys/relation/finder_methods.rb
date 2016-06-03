@@ -113,6 +113,10 @@ module CompositePrimaryKeys
         relation = self
         values = primary_keys.each_with_index.map do |primary_key, i|
           column = columns_hash[primary_key]
+          
+          # do not bind nil, so it translates to IS NULL
+          next nil if id[i].nil?
+
           relation.bind_values += [[column, id[i]]]
           connection.substitute_at(column, bind_values.length - 1)
         end
